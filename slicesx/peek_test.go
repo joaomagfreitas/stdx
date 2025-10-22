@@ -12,8 +12,8 @@ func TestFirst(t *testing.T) {
 	testCases := []struct {
 		predicate func(string) bool
 		desc      string
-		input     []string
 		output    string
+		input     []string
 		ok        bool
 	}{
 		{
@@ -57,8 +57,8 @@ func TestLast(t *testing.T) {
 	testCases := []struct {
 		predicate func(string) bool
 		desc      string
-		input     []string
 		output    string
+		input     []string
 		ok        bool
 	}{
 		{
