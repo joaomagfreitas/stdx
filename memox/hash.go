@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"math"
+	"reflect"
 )
 
 const (
@@ -76,16 +77,21 @@ func fnv64a(val any, offset uint64) uint64 {
 		h = (h ^ math.Float64bits(imag(v))) * prime64
 
 	case string:
-		for i := 0; i < len(v); i++ {
+		for i := range v {
 			h = (h ^ uint64(v[i])) * prime64
 		}
 
 	case []byte:
-		for i := 0; i < len(v); i++ {
+		for i := range v {
 			h = (h ^ uint64(v[i])) * prime64
 		}
 
 	default:
+		ref := reflect.ValueOf(val)
+		if ref.Kind() == reflect.Pointer || ref.Kind() == reflect.Func {
+			return fnv64a(ref.Pointer(), h)
+		}
+
 		var buf bytes.Buffer
 		enc := gob.NewEncoder(&buf)
 
