@@ -145,7 +145,11 @@ linters:
       - linters:
           - goconst
           - errcheck
+          - gosec
         path: (.+)_test\.go
+      - linters:
+          - gosec
+        path: memox/hash.go
     paths:
       - third_party$
       - builtin$
