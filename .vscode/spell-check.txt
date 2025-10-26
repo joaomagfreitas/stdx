@@ -1,3 +1,4 @@
 stdx
 slicesx
 errorsx
+memox
