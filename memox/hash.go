@@ -11,12 +11,23 @@ const (
 	prime64  = uint64(1099511628211)
 )
 
+// Hashes a value using a fast/low risk of collision algorithm (fnv64-a).
+func hash(val any) uint64 {
+	return fnv64a(val, offset64)
+}
+
+// Hashes two values using a fast/low risk of collision algorithm (fnv64-a).
+func hash2(val, val2 any) uint64 {
+	return fnv64a(val2, hash(val))
+}
+
 // Computes the FNV-1a hash of an arbitrary value. Works with all builtin types, otherwise it uses `gob` encoder
 // to translate the value to binary.
 //
 // This function panics if the value can't be encoded to binary.
-func fnv64a(val any) uint64 {
-	h := offset64
+// Adapted from: https://github.com/agkloop/go_memoize/blob/main/hashing.go
+func fnv64a(val any, offset uint64) uint64 {
+	h := offset
 
 	switch v := val.(type) {
 	case nil:
@@ -83,19 +94,8 @@ func fnv64a(val any) uint64 {
 			panic(err)
 		}
 
-		return fnv64a(buf.Bytes())
+		return fnv64a(buf.Bytes(), h)
 	}
 
 	return h
-}
-
-func check(v any) {
-	switch v.(type) {
-	case int:
-		println("int")
-	case uint:
-		println("uint")
-	default:
-		println("none")
-	}
 }

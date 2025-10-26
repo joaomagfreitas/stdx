@@ -5,7 +5,7 @@ func Memoize1[A1 any](fn func1[A1]) func1[A1] {
 	c := map[uint64]any{}
 
 	return func(a1 A1) {
-		h := fnv64a(a1)
+		h := hash(a1)
 		_, ok := c[h]
 
 		if !ok {
@@ -20,7 +20,7 @@ func Memoize1R1[A1, R1 any](fn func1R1[A1, R1]) func1R1[A1, R1] {
 	c := map[uint64]R1{}
 
 	return func(a1 A1) R1 {
-		h := fnv64a(a1)
+		h := hash(a1)
 		r1, ok := c[h]
 
 		if !ok {
@@ -37,7 +37,7 @@ func Memoize1R2[A1, R1, R2 any](fn func1R2[A1, R1, R2]) func1R2[A1, R1, R2] {
 	c := map[uint64]tuple[R1, R2]{}
 
 	return func(a1 A1) (R1, R2) {
-		h := fnv64a(a1)
+		h := hash(a1)
 		r, ok := c[h]
 
 		if !ok {
