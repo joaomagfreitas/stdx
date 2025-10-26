@@ -12,8 +12,8 @@ func TestMemoizeSupportedTypes(t *testing.T) {
 	ptr := 0
 
 	testCases := []struct {
-		desc string
 		arg1 any
+		desc string
 	}{
 		{
 			desc: "supports nil values",
@@ -118,9 +118,9 @@ func TestMemoizeSupportedTypes(t *testing.T) {
 		{
 			desc: "supports complex struct values",
 			arg1: struct {
-				A1 int
 				A2 string
 				A3 []float32
+				A1 int
 				A4 bool
 			}{
 				A1: 32,
@@ -159,15 +159,15 @@ func TestMemoizeUnsupportedTypes(t *testing.T) {
 	rand := func(v any) int { return rand.Int() }
 
 	testCases := []struct {
-		desc string
 		arg1 any
+		desc string
 	}{
 		{
 			desc: "does not support unexported fields in structs",
 			arg1: struct {
-				a1 int
 				a2 string
 				a3 []float32
+				a1 int
 				a4 bool
 			}{
 				a1: 32,
