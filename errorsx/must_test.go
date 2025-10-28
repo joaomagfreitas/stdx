@@ -23,4 +23,7 @@ func TestMustExample(t *testing.T) {
 
 	defer func() { recover() }()
 	r = errorsx.Must(div(10, 0))
+	if r == 0 {
+		t.Fail()
+	}
 }
