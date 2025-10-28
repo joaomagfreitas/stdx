@@ -2,3 +2,4 @@ stdx
 slicesx
 errorsx
 memox
+httpx
