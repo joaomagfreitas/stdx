@@ -63,7 +63,18 @@ func TestSmokePingPong(t *testing.T) {
 				return httpx.Delete(s.URL, nil, nil)
 			},
 		},
-
+		{
+			desc: "head",
+			reqFn: func() (*http.Response, error) {
+				return httpx.Head(s.URL, nil, nil)
+			},
+		},
+		{
+			desc: "options",
+			reqFn: func() (*http.Response, error) {
+				return httpx.Options(s.URL, nil, nil)
+			},
+		},
 		{
 			desc: "get (client)",
 			reqFn: func() (*http.Response, error) {
@@ -97,6 +108,18 @@ func TestSmokePingPong(t *testing.T) {
 			desc: "delete (client)",
 			reqFn: func() (*http.Response, error) {
 				return c.Delete(s.URL, nil, nil)
+			},
+		},
+		{
+			desc: "head (client)",
+			reqFn: func() (*http.Response, error) {
+				return c.Head(s.URL, nil, nil)
+			},
+		},
+		{
+			desc: "options (client)",
+			reqFn: func() (*http.Response, error) {
+				return c.Options(s.URL, nil, nil)
 			},
 		},
 	}

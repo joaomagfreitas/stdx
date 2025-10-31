@@ -5,15 +5,14 @@ import (
 	"net/url"
 )
 
-// Patch sends an HTTP PATCH request to the specified URL with optional query
+// Options sends an HTTP OPTIONS request to the specified URL with optional query
 // parameters and headers.
-func Patch(
+func Options(
 	url string,
-	body []byte,
 	query url.Values,
 	headers http.Header,
 ) (*http.Response, error) {
-	req, err := Bake(url, "", http.MethodPatch, body, query, headers)
+	req, err := Bake(url, "", http.MethodOptions, nil, query, headers)
 	if err != nil {
 		return nil, err
 	}
