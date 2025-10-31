@@ -25,6 +25,12 @@ type Client interface {
 	// Delete sends an HTTP DELETE request.
 	Delete(endpoint string, query url.Values, headers http.Header) (*http.Response, error)
 
+	// Delete sends an HTTP HEAD request.
+	Head(endpoint string, query url.Values, headers http.Header) (*http.Response, error)
+
+	// Delete sends an HTTP OPTIONS request.
+	Options(endpoint string, query url.Values, headers http.Header) (*http.Response, error)
+
 	// Do executes an already composed HTTP request.
 	Do(request *http.Request) (*http.Response, error)
 }

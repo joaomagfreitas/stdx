@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-// Get sends an HTTP DELETE request to the specified URL with optional query
+// Delete sends an HTTP DELETE request to the specified URL with optional query
 // parameters and headers.
 func Delete(
 	url string,

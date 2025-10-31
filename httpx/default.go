@@ -55,6 +55,24 @@ func (c defaultClient) Delete(endpoint string, query url.Values, headers http.He
 	return c.Do(req)
 }
 
+func (c defaultClient) Head(endpoint string, query url.Values, headers http.Header) (*http.Response, error) {
+	req, err := Bake(c.baseUrl, endpoint, http.MethodHead, nil, query, headers)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Do(req)
+}
+
+func (c defaultClient) Options(endpoint string, query url.Values, headers http.Header) (*http.Response, error) {
+	req, err := Bake(c.baseUrl, endpoint, http.MethodOptions, nil, query, headers)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Do(req)
+}
+
 func (c defaultClient) Do(request *http.Request) (*http.Response, error) {
 	return c.client.Do(request)
 }
