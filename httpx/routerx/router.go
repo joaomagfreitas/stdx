@@ -72,9 +72,9 @@ func (b *routerBuilder) Mux(mux mux) *routerBuilder {
 
 // Build builds the router ready handle requests in a [http.Server].
 func (b *routerBuilder) Build() Router {
-	mux := b.mux
-	if mux == nil {
-		mux = http.NewServeMux()
+	mx := b.mux
+	if mx == nil {
+		mx = http.NewServeMux()
 	}
 
 	for _, r := range b.routes {
@@ -84,10 +84,10 @@ func (b *routerBuilder) Build() Router {
 		}
 
 		h := chain(r.Handler, b.middlewares...)
-		mux.Handle(p, h)
+		mx.Handle(p, h)
 	}
 
-	return mux
+	return mx
 }
 
 func (b *routerBuilder) addRoute(method, pattern string, handler http.HandlerFunc) *routerBuilder {
