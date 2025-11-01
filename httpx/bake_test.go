@@ -87,6 +87,12 @@ func TestBakeContentType(t *testing.T) {
 			contentType: "foo.bar",
 			headers:     http.Header{http.CanonicalHeaderKey("content-type"): []string{"foo.bar"}},
 		},
+		{
+			desc:        "does not ignore case insensitive content-type header",
+			body:        nil,
+			contentType: "foo.bar",
+			headers:     http.Header{"content-type": []string{"foo.bar"}},
+		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
