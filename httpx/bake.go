@@ -33,8 +33,8 @@ func Bake(
 		return nil, err
 	}
 
-	if len(headers) > 0 {
-		req.Header = headers
+	for k, v := range headers {
+		req.Header[http.CanonicalHeaderKey(k)] = v
 	}
 
 	if ct := req.Header.Get("content-type"); len(ct) == 0 && body != nil {
