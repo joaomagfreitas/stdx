@@ -61,7 +61,7 @@ func TestXmlDeserializeError(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = requestx.Json[string](*req)
+	_, err = requestx.Xml[func()](*req)
 	if err == nil {
 		t.Fail()
 	}
