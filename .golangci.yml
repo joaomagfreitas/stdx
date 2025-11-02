@@ -58,6 +58,7 @@ linters:
       ignore-calls: false
       ignore-string-values:
         - "%v"
+        - "content-type"
     godot:
       scope: toplevel
       exclude:
