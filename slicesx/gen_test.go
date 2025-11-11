@@ -9,10 +9,10 @@ import (
 
 func TestGen(t *testing.T) {
 	testCases := []struct {
-		desc   string
-		count  int
 		fn     func(int) int
+		desc   string
 		output []int
+		count  int
 	}{
 		{
 			desc:   "returns empty if count is 0",
