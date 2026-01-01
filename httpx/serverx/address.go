@@ -8,7 +8,7 @@ import (
 	"github.com/joaomagfreitas/stdx/slicesx"
 )
 
-// common env variables for the http server host
+// common env variables for the http server host.
 var hosts = []string{
 	"host",
 	"http.host",
@@ -17,7 +17,7 @@ var hosts = []string{
 	"server_host",
 }
 
-// common env variables for the http server port
+// common env variables for the http server port.
 var ports = []string{
 	"port",
 	"http.port",

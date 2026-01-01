@@ -27,9 +27,9 @@ func TestAddressEnvVariables(t *testing.T) {
 func TestAddressFallback(t *testing.T) {
 	testCases := []struct {
 		desc string
+		addr string
 		host []string
 		port []string
-		addr string
 	}{
 		{
 			desc: "uses fallback if host env key is missing",
