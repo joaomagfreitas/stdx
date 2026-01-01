@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-// Html attempts to write value [v] in the response body, as an HTML document.
+// Html attempts to write value [doc] in the response body, as an HTML document.
 // If successful, it also includes `text/html` content type in the header fields.
 func Html(w http.ResponseWriter, doc string) error {
 	w.Header().Set("content-type", "text/html")
