@@ -28,6 +28,11 @@ func formatExtras(extras map[string]any) string {
 	if len(extras) == 0 {
 		return ""
 	}
-	b, _ := json.Marshal(extras)
+
+	b, err := json.Marshal(extras)
+	if err != nil {
+		return err.Error()
+	}
+
 	return string(b)
 }

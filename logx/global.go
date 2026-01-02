@@ -5,7 +5,7 @@ var loggers = []Logger{}
 
 // WithLoggers replaces the current global set of [Logger] used in top level logging calls.
 func WithLoggers(
-	loggers ...Logger,
+	logger ...Logger,
 ) {
-	loggers = append([]Logger{}, loggers...)
+	loggers = append([]Logger{}, logger...)
 }
