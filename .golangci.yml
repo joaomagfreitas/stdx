@@ -151,6 +151,9 @@ linters:
       - linters:
           - gosec
         path: memox/hash.go
+      - linters:
+          - unused
+        path: logx/consolex/console.go
     paths:
       - third_party$
       - builtin$
