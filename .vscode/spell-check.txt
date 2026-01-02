@@ -8,3 +8,15 @@ requestx
 writerx
 responsex
 serverx
+logx
+tracex
+tracef
+infox
+infof
+warningx
+warningf
+criticalx
+criticalf
+errorx
+errorf
+consolex
