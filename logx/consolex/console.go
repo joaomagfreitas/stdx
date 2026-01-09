@@ -2,25 +2,25 @@ package consolex
 
 import "encoding/json"
 
-type consoleLogger struct{}
+type ConsoleLogger struct{}
 
-func (consoleLogger) Trace(msg string, extras map[string]any) {
+func (ConsoleLogger) Trace(msg string, extras map[string]any) {
 	println("[TRACE]", msg, formatExtras(extras))
 }
 
-func (consoleLogger) Info(msg string, extras map[string]any) {
+func (ConsoleLogger) Info(msg string, extras map[string]any) {
 	println("[INFO]", msg, formatExtras(extras))
 }
 
-func (consoleLogger) Warning(msg string, extras map[string]any) {
+func (ConsoleLogger) Warning(msg string, extras map[string]any) {
 	println("[WARN]", msg, formatExtras(extras))
 }
 
-func (consoleLogger) Critical(msg string, extras map[string]any) {
+func (ConsoleLogger) Critical(msg string, extras map[string]any) {
 	println("[CRITICAL]", msg, formatExtras(extras))
 }
 
-func (consoleLogger) Error(err error, extras map[string]any) {
+func (ConsoleLogger) Error(err error, extras map[string]any) {
 	println("[ERROR]", err.Error(), formatExtras(extras))
 }
 
