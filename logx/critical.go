@@ -22,3 +22,11 @@ func Criticalx(msg string, extras map[string]any) {
 		l.Critical(msg, extras)
 	}
 }
+
+// Critical logs a message indicating a serious failure requiring immediate attention.
+// Same as [Critical] but includes an error in structured context with key "error".
+func Criticale(msg string, err error) {
+	for _, l := range loggers {
+		l.Critical(msg, map[string]any{"error": err})
+	}
+}
