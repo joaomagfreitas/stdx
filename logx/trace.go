@@ -22,3 +22,11 @@ func Tracex(msg string, extras map[string]any) {
 		l.Trace(msg, extras)
 	}
 }
+
+// Trace logs a low-level diagnostic message.
+// Same as [Trace] but includes an error in structured context with key "error".
+func Tracee(msg string, err error) {
+	for _, l := range loggers {
+		l.Trace(msg, map[string]any{"error": err})
+	}
+}

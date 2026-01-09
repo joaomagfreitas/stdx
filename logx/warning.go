@@ -22,3 +22,11 @@ func Warningx(msg string, extras map[string]any) {
 		l.Warning(msg, extras)
 	}
 }
+
+// Warning logs a message indicating a potential issue.
+// Same as [Warning] but includes an error in structured context with key "error".
+func Warninge(msg string, err error) {
+	for _, l := range loggers {
+		l.Warning(msg, map[string]any{"error": err})
+	}
+}
