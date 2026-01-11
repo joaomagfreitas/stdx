@@ -9,11 +9,11 @@ import (
 // It can wrap an underlying error while adding origin, category,
 // operation, and a human-readable message.
 type StructuredError struct {
+	Wrapped   error
 	Origin    string
 	Category  string
 	Operation string
 	Message   string
-	Wrapped   error
 }
 
 func (err StructuredError) Error() string {
