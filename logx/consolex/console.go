@@ -1,6 +1,9 @@
 package consolex
 
-import "encoding/json"
+import (
+	"fmt"
+	"strings"
+)
 
 type ConsoleLogger struct{}
 
@@ -29,10 +32,10 @@ func formatExtras(extras map[string]any) string {
 		return ""
 	}
 
-	b, err := json.Marshal(extras)
-	if err != nil {
-		return err.Error()
+	var sb strings.Builder
+	for k, v := range extras {
+		sb.WriteString(fmt.Sprintf("\n » %s: \"%s\"", k, v))
 	}
 
-	return string(b)
+	return sb.String()
 }
