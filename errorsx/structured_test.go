@@ -7,6 +7,14 @@ import (
 	"github.com/joaomagfreitas/stdx/errorsx"
 )
 
+type fooError struct {
+	Foo string
+}
+
+func (err fooError) Error() string {
+	return err.Foo
+}
+
 func TestStructuredError(t *testing.T) {
 	testCases := []struct {
 		desc   string
@@ -62,4 +70,14 @@ func TestStructuredError(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestWrap(t *testing.T) {
+	err := fooError{Foo: "bar"}
+
+	werr := errorsx.Wrap(err, "", "", "", "")
+	if !errors.Is(werr, err) {
+		t.Fatal(err)
+	}
+
 }

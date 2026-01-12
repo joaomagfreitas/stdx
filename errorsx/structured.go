@@ -1,6 +1,7 @@
 package errorsx
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -46,4 +47,25 @@ func (err StructuredError) Error() string {
 	}
 
 	return fmt.Sprintf(strings.TrimSuffix(sb.String(), ", "), args...)
+}
+
+// Wrap wraps an error in a [StructuredError].
+// The original error can still be accessed using `errors.As`.
+func Wrap(
+	err error,
+	origin string,
+	category string,
+	operation string,
+	message string,
+) error {
+	return errors.Join(
+		StructuredError{
+			Wrapped:   err,
+			Origin:    origin,
+			Category:  category,
+			Operation: operation,
+			Message:   message,
+		},
+		err,
+	)
 }
