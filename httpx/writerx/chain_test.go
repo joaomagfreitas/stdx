@@ -1,7 +1,7 @@
 package writerx_test
 
 import (
-	"io"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,14 +13,17 @@ import (
 
 func TestChainInvocationOrder(t *testing.T) {
 	p := "foo.bar"
-	doc := "<html><head><body></body></html"
+	doc := fooBar{Baz: "bar"}
 
 	r := routerx.
 		New().
 		Get(p, func(w http.ResponseWriter, r *http.Request) {
 			err := writerx.
 				Chain(w).
-				Html(doc).
+				Text("foo bar").
+				Html("<foo>bar</bar>").
+				Xml("<foo>bar</bar>").
+				Json(doc).
 				Status(300).
 				Header("foo", "bar").
 				Write()
@@ -39,15 +42,14 @@ func TestChainInvocationOrder(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var rv string
-	bs, err := io.ReadAll(resp.Body)
+	var rdoc fooBar
+	err = json.NewDecoder(resp.Body).Decode(&rdoc)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	rv = string(bs)
-	if doc != rv {
-		t.Fail()
+	if doc != rdoc {
+		t.Fatal(rdoc)
 	}
 
 	if resp.StatusCode != 300 {
@@ -55,6 +57,10 @@ func TestChainInvocationOrder(t *testing.T) {
 	}
 
 	if resp.Header.Get("foo") != "bar" {
+		t.Fatal(resp.Header)
+	}
+
+	if resp.Header.Get("content-type") != "application/json" {
 		t.Fatal(resp.Header)
 	}
 }

@@ -29,6 +29,8 @@ func (c *chain) Json(v any) *chain {
 		return Json(w, v)
 	}
 
+	c.h["content-type"] = "application/json"
+
 	return c
 }
 
@@ -37,6 +39,8 @@ func (c *chain) Xml(v any) *chain {
 	c.wr = func(w http.ResponseWriter) error {
 		return Xml(w, v)
 	}
+
+	c.h["content-type"] = "application/xml"
 
 	return c
 }
@@ -47,6 +51,8 @@ func (c *chain) Text(v any) *chain {
 		return Text(w, v)
 	}
 
+	c.h["content-type"] = "text/plain"
+
 	return c
 }
 
@@ -55,6 +61,8 @@ func (c *chain) Html(doc string) *chain {
 	c.wr = func(w http.ResponseWriter) error {
 		return Html(w, doc)
 	}
+
+	c.h["content-type"] = "text/html"
 
 	return c
 }
