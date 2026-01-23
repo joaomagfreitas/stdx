@@ -2,6 +2,8 @@ package consolex
 
 import (
 	"fmt"
+	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -32,9 +34,32 @@ func formatExtras(extras map[string]any) string {
 		return ""
 	}
 
+	ks := []string{}
+	for k := range extras {
+		ks = append(ks, k)
+	}
+
 	var sb strings.Builder
-	for k, v := range extras {
-		sb.WriteString(fmt.Sprintf("\n » %s: \"%s\"", k, v))
+	for _, k := range ks {
+		v := extras[k]
+		sb.WriteString(fmt.Sprintf("\n » %s: ", k))
+
+		switch t := v.(type) {
+		case http.Header:
+			for k, v := range t {
+				sb.WriteString(fmt.Sprintf("\n  » %v: %v", k, v))
+			}
+		case url.Values:
+			for k, v := range t {
+				sb.WriteString(fmt.Sprintf("\n  » %v: %v", k, v))
+			}
+		case map[string]any:
+			for k, v := range t {
+				sb.WriteString(fmt.Sprintf("\n  » %v: %v", k, v))
+			}
+		default:
+			sb.WriteString(fmt.Sprintf("%v", t))
+		}
 	}
 
 	return sb.String()
