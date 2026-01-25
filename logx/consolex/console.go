@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"strings"
 )
 
@@ -38,6 +39,8 @@ func formatExtras(extras map[string]any) string {
 	for k := range extras {
 		ks = append(ks, k)
 	}
+
+	slices.Sort(ks)
 
 	var sb strings.Builder
 	for _, k := range ks {
