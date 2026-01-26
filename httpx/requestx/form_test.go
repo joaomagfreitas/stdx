@@ -11,25 +11,46 @@ import (
 )
 
 func TestFormUrl(t *testing.T) {
-	k := "foo"
-	v := "bar"
-	q := url.Values{k: []string{v}}
+	m := map[string]string{
+		"foo":   "bar",
+		"baz":   "lorem",
+		"ipsum": "doli",
+	}
 
-	req, err := httpx.Bake("https://foo", "bar", http.MethodPost, nil, q, nil)
+	q := url.Values{}
+	for k, v := range m {
+		q.Add(k, v)
+	}
+
+	req, err := httpx.Bake("https://foo", "bar", http.MethodGet, nil, q, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	qv := requestx.Form(*req, k)
-	if qv != v {
-		t.Fail()
+	for k, v := range m {
+		qv := requestx.Form(req, k)
+		if qv != v {
+			t.Fatal(qv)
+		}
 	}
 }
 
 func TestFormBodyUrlEncoded(t *testing.T) {
-	k := "foo"
-	v := "bar"
-	b := fmt.Appendf(nil, "%s=%s", k, v)
+	m := map[string]string{
+		"foo":   "bar",
+		"baz":   "lorem",
+		"ipsum": "doli",
+	}
+
+	var b []byte
+	for k, v := range m {
+		if len(b) == 0 {
+			b = fmt.Appendf(nil, "%s=%s", k, v)
+		} else {
+			b = fmt.Appendf(b, "&%s=%s", k, v)
+		}
+	}
+
 	h := http.Header{http.CanonicalHeaderKey("content-type"): []string{"application/x-www-form-urlencoded "}}
 
 	req, err := httpx.Bake("https://foo", "bar", http.MethodPost, b, nil, h)
@@ -37,8 +58,10 @@ func TestFormBodyUrlEncoded(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	qv := requestx.Form(*req, k)
-	if qv != v {
-		t.Fail()
+	for k, v := range m {
+		qv := requestx.Form(req, k)
+		if qv != v {
+			t.Fatal(qv)
+		}
 	}
 }
