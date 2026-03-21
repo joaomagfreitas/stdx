@@ -30,12 +30,29 @@ type Driver struct {
 	Cols map[string][]string
 }
 
-func (d *Driver) Open(name string) (driver.Conn, error) {
-	return &Conn{driver: d}, nil
-}
-
 type Conn struct {
 	driver *Driver
+}
+
+type Stmt struct {
+	driver *Driver
+	query  string
+}
+
+type Rows struct {
+	errClose error
+	columns  []string
+	data     [][]driver.Value
+	idx      int
+}
+
+type Foo struct {
+	Bar string
+	Id  int64
+}
+
+func (d *Driver) Open(name string) (driver.Conn, error) {
+	return &Conn{driver: d}, nil
 }
 
 func (c *Conn) Prepare(query string) (driver.Stmt, error) {
@@ -48,11 +65,6 @@ func (c *Conn) Prepare(query string) (driver.Stmt, error) {
 func (c *Conn) Close() error              { return nil }
 func (c *Conn) Begin() (driver.Tx, error) { return nil, nil }
 
-type Stmt struct {
-	query  string
-	driver *Driver
-}
-
 func (s *Stmt) Close() error  { return nil }
 func (s *Stmt) NumInput() int { return -1 }
 
@@ -61,19 +73,19 @@ func (s *Stmt) Exec(args []driver.Value) (driver.Result, error) {
 }
 
 func (s *Stmt) Query(args []driver.Value) (driver.Rows, error) {
-	data, ok := s.driver.Data[s.query]
+	d, ok := s.driver.Data[s.query]
 	if !ok {
 		return nil, fmt.Errorf("no fake data for query: %s", s.query)
 	}
 
-	cols := s.driver.Cols[s.query]
-	if cols == nil {
+	cs := s.driver.Cols[s.query]
+	if cs == nil {
 		return nil, fmt.Errorf("no columns defined for query: %s", s.query)
 	}
 
 	rs := Rows{
-		columns: cols,
-		data:    data,
+		columns: cs,
+		data:    d,
 	}
 
 	for _, arg := range args {
@@ -83,14 +95,6 @@ func (s *Stmt) Query(args []driver.Value) (driver.Rows, error) {
 	}
 
 	return &rs, nil
-}
-
-type Rows struct {
-	columns  []string
-	data     [][]driver.Value
-	idx      int
-	errScan  error
-	errClose error
 }
 
 func (r *Rows) Columns() []string { return r.columns }
@@ -103,11 +107,6 @@ func (r *Rows) Next(dest []driver.Value) error {
 	copy(dest, r.data[r.idx])
 	r.idx++
 	return nil
-}
-
-type Foo struct {
-	Id  int64
-	Bar string
 }
 
 func TestMain(m *testing.M) {

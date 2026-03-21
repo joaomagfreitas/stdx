@@ -22,6 +22,10 @@ func TestScan(t *testing.T) {
 		return []any{&f.Id, &f.Bar}
 	})
 
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	if !reflect.DeepEqual(
 		foo,
 		Foo{Id: 1, Bar: "Foo"},
@@ -46,6 +50,10 @@ func TestScanAll(t *testing.T) {
 	foos, err := sqlx.ScanAll(rows, func(f *Foo) []any {
 		return []any{&f.Id, &f.Bar}
 	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if !reflect.DeepEqual(
 		foos,

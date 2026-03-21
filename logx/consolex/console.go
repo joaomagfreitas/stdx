@@ -45,23 +45,23 @@ func formatExtras(extras map[string]any) string {
 	var sb strings.Builder
 	for _, k := range ks {
 		v := extras[k]
-		sb.WriteString(fmt.Sprintf("\n » %s: ", k))
+		fmt.Fprintf(&sb, "\n » %s: ", k)
 
 		switch t := v.(type) {
 		case http.Header:
 			for k, v := range t {
-				sb.WriteString(fmt.Sprintf("\n  » %v: %v", k, v))
+				fmt.Fprintf(&sb, "\n  » %v: %v", k, v)
 			}
 		case url.Values:
 			for k, v := range t {
-				sb.WriteString(fmt.Sprintf("\n  » %v: %v", k, v))
+				fmt.Fprintf(&sb, "\n  » %v: %v", k, v)
 			}
 		case map[string]any:
 			for k, v := range t {
-				sb.WriteString(fmt.Sprintf("\n  » %v: %v", k, v))
+				fmt.Fprintf(&sb, "\n  » %v: %v", k, v)
 			}
 		default:
-			sb.WriteString(fmt.Sprintf("%v", t))
+			fmt.Fprintf(&sb, "%v", t)
 		}
 	}
 
