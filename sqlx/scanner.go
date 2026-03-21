@@ -2,6 +2,7 @@ package sqlx
 
 import (
 	"database/sql"
+	"errors"
 )
 
 // Scan maps a single sql.Row into a [Record] struct.
@@ -21,9 +22,9 @@ import (
 //	user, err := Scan(row, func(u *User) []any {
 //		return []any{&u.ID, &u.Name, &u.Email}
 //	})
-func Scan[Record any](row *sql.Row, destination func(r *Record) []any) (*Record, error) {
+func Scan[Record any](row *sql.Row, destination func(r *Record) []any) (Record, error) {
 	var r Record
-	return &r, row.Scan(destination(&r)...)
+	return r, row.Scan(destination(&r)...)
 }
 
 // ScanAll maps all sql.Rows into a slice of [Record] structs.
@@ -46,16 +47,28 @@ func Scan[Record any](row *sql.Row, destination func(r *Record) []any) (*Record,
 //	users, err := ScanAll(rows, func(u *User) []any {
 //		return []any{&u.ID, &u.Name, &u.Email}
 //	})
-func ScanAll[Record any](rows *sql.Rows, destination func(r *Record) []any) ([]*Record, error) {
-	rs := []*Record{}
+//
+// The rows cursor is automatically closed upon calling this function, whether the scanning fails or not.
+func ScanAll[Record any](rows *sql.Rows, destination func(r *Record) []any) (rs []Record, err error) {
+	defer func() {
+		if err = errors.Join(err, rows.Close()); err != nil {
+			rs = nil
+		}
+	}()
+
+	rs = []Record{}
 	for rows.Next() {
 		var r Record
-		if err := rows.Scan(destination(&r)...); err != nil {
-			return nil, err
+		if err = rows.Scan(destination(&r)...); err != nil {
+			return
 		}
 
-		rs = append(rs, &r)
+		rs = append(rs, r)
 	}
 
-	return rs, nil
+	if err = rows.Err(); err != nil {
+		return
+	}
+
+	return
 }

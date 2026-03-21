@@ -3,6 +3,7 @@ package sqlx_test
 import (
 	"database/sql"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"io"
 	"testing"
@@ -20,6 +21,8 @@ var (
 		{3, "Baz"},
 	}
 	cols = []string{"id", "bar"}
+
+	errRowsClose = errors.New("connection dropped mid close")
 )
 
 type Driver struct {
@@ -68,20 +71,30 @@ func (s *Stmt) Query(args []driver.Value) (driver.Rows, error) {
 		return nil, fmt.Errorf("no columns defined for query: %s", s.query)
 	}
 
-	return &Rows{
+	rs := Rows{
 		columns: cols,
 		data:    data,
-	}, nil
+	}
+
+	for _, arg := range args {
+		if arg == errRowsClose.Error() {
+			rs.errClose = errRowsClose
+		}
+	}
+
+	return &rs, nil
 }
 
 type Rows struct {
-	columns []string
-	data    [][]driver.Value
-	idx     int
+	columns  []string
+	data     [][]driver.Value
+	idx      int
+	errScan  error
+	errClose error
 }
 
 func (r *Rows) Columns() []string { return r.columns }
-func (r *Rows) Close() error      { return nil }
+func (r *Rows) Close() error      { return r.errClose }
 
 func (r *Rows) Next(dest []driver.Value) error {
 	if r.idx >= len(r.data) {
