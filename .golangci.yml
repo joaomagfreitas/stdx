@@ -154,6 +154,10 @@ linters:
       - linters:
           - unused
         path: logx/consolex/console.go
+      - linters:
+          - gosec
+        path: httpx/default.go
+        text: "G704"
     paths:
       - third_party$
       - builtin$
