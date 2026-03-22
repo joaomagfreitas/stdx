@@ -22,6 +22,7 @@ var (
 	}
 	cols = []string{"id", "bar"}
 
+	errQuery     = errors.New("connection dropped mid query")
 	errRowsClose = errors.New("connection dropped mid close")
 )
 
@@ -73,6 +74,12 @@ func (s *Stmt) Exec(args []driver.Value) (driver.Result, error) {
 }
 
 func (s *Stmt) Query(args []driver.Value) (driver.Rows, error) {
+	for _, arg := range args {
+		if arg == errQuery.Error() {
+			return nil, errQuery
+		}
+	}
+
 	d, ok := s.driver.Data[s.query]
 	if !ok {
 		return nil, fmt.Errorf("no fake data for query: %s", s.query)
