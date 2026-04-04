@@ -8,11 +8,11 @@ import (
 )
 
 type insertBuilder struct {
+	placeholderMapping PlaceholderMapping
 	table              string
 	columns            []string
 	values             []string
 	returning          []string
-	placeholderMapping PlaceholderMapping
 }
 
 // PlaceholderMapping defines a function that maps a parameter index

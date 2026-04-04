@@ -11,9 +11,9 @@ import (
 
 func TestInsert(t *testing.T) {
 	testCases := []struct {
+		builder func() string
 		desc    string
 		sql     string
-		builder func() string
 	}{
 		{
 			desc: "joins values following the order they were passed",

@@ -158,6 +158,10 @@ linters:
           - gosec
         path: httpx/default.go
         text: "G704"
+      - linters:
+          - goconst
+        path: sqlx/builder/*
+        text: ", "
     paths:
       - third_party$
       - builtin$
