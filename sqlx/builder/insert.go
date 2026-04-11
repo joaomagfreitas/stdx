@@ -15,19 +15,6 @@ type insertBuilder struct {
 	returning          []string
 }
 
-// PlaceholderMapping defines a function that maps a parameter index
-// (starting at 0) to a SQL placeholder string.
-//
-// It can be used to adapt the builder to different SQL dialects.
-//
-// Example:
-//
-//	// PostgreSQL-style placeholders: $1, $2, ...
-//	mapping := func(i int) string {
-//	    return fmt.Sprintf("$%d", i+1)
-//	}
-type PlaceholderMapping func(index int) string
-
 // Insert allows to create an INSERT SQL query in a fluent manner,
 // by providing a builder API for each supported clause.
 // //
@@ -43,7 +30,7 @@ type PlaceholderMapping func(index int) string
 //	// VALUES (?, ?);
 func Insert() *insertBuilder {
 	return &insertBuilder{
-		placeholderMapping: func(index int) string { return "?" },
+		placeholderMapping: DefaultPlaceholderMapping,
 	}
 }
 
