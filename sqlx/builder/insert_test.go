@@ -83,7 +83,7 @@ func TestInsert(t *testing.T) {
 			sql: `
 			INSERT INTO foo (bar, lorem, ipsum)
 			VALUES (1, 2, 3)
-			RETURNING (lorem, ipsum);`,
+			RETURNING lorem, ipsum;`,
 		},
 	}
 	for _, tC := range testCases {

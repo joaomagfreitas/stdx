@@ -115,7 +115,7 @@ func (b *insertBuilder) String() string {
 	fmt.Fprintf(&sb, "\nVALUES (%s)", strings.Join(vs, ", "))
 
 	if len(b.returning) > 0 {
-		fmt.Fprintf(&sb, "\nRETURNING (%s)", strings.Join(b.returning, ", "))
+		fmt.Fprintf(&sb, "\nRETURNING %s", strings.Join(b.returning, ", "))
 	}
 
 	sb.WriteRune(';')
