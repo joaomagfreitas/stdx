@@ -47,6 +47,9 @@ type Rows struct {
 	idx      int
 }
 
+type Tx struct {
+}
+
 type Foo struct {
 	Bar string
 	Id  int64
@@ -64,7 +67,7 @@ func (c *Conn) Prepare(query string) (driver.Stmt, error) {
 }
 
 func (c *Conn) Close() error              { return nil }
-func (c *Conn) Begin() (driver.Tx, error) { return nil, nil }
+func (c *Conn) Begin() (driver.Tx, error) { return &Tx{}, nil }
 
 func (s *Stmt) Close() error  { return nil }
 func (s *Stmt) NumInput() int { return -1 }
@@ -113,6 +116,14 @@ func (r *Rows) Next(dest []driver.Value) error {
 	}
 	copy(dest, r.data[r.idx])
 	r.idx++
+	return nil
+}
+
+func (tx *Tx) Commit() error {
+	return nil
+}
+
+func (tx *Tx) Rollback() error {
 	return nil
 }
 
