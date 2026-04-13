@@ -76,3 +76,93 @@ func TestAllErrorResetsResult(t *testing.T) {
 		t.Fatal(foos)
 	}
 }
+
+func TestSingleTx(t *testing.T) {
+	db, err := sql.Open(testDriver, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer db.Close()
+
+	tx, err := db.BeginTx(t.Context(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer tx.Rollback()
+
+	foo, err := sqlx.SingleTx(t.Context(), tx, query, func(f *Foo) []any {
+		return []any{&f.Id, &f.Bar}
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(
+		foo,
+		Foo{Id: 1, Bar: "Foo"},
+	) {
+		t.Fatal(foo)
+	}
+}
+
+func TestAllTx(t *testing.T) {
+	db, err := sql.Open(testDriver, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer db.Close()
+
+	tx, err := db.BeginTx(t.Context(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer tx.Rollback()
+
+	foos, err := sqlx.AllTx(t.Context(), tx, query, func(f *Foo) []any {
+		return []any{&f.Id, &f.Bar}
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(
+		foos,
+		[]Foo{{Id: 1, Bar: "Foo"}, {Id: 2, Bar: "Bar"}, {Id: 3, Bar: "Baz"}},
+	) {
+		t.Fatal(foos)
+	}
+}
+
+func TestAllTxErrorResetsResult(t *testing.T) {
+	db, err := sql.Open(testDriver, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer db.Close()
+
+	tx, err := db.BeginTx(t.Context(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer tx.Rollback()
+
+	foos, err := sqlx.AllTx(t.Context(), tx, query, func(f *Foo) []any {
+		return []any{&f.Id, &f.Bar}
+	}, errQuery)
+
+	if err == nil {
+		t.FailNow()
+	}
+
+	if foos != nil {
+		t.Fatal(foos)
+	}
+}
