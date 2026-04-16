@@ -8,6 +8,26 @@ WHERE A != 2
 WHERE A LIKE 'add'
 WHERE A IN (1, 2, 3)
 */
+
+type expr interface {
+	And(expression expr)
+	Or(expression expr)
+	String(placeholder PlaceholderMapping, placeholderIndex int)
+}
+
+type placeholderExpression struct {
+	column   string
+	operator operator
+}
+
+func (exp placeholderExpression) String() {}
+
+type valueExpression struct {
+	column   string
+	operator operator
+	value    string
+}
+
 type expression struct {
 	column           string
 	value            string
