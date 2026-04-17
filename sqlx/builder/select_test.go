@@ -31,6 +31,22 @@ func TestSelect(t *testing.T) {
 			`,
 		},
 		{
+			desc: "sets rows limit with placeholder if placeholder index is passed",
+			builder: func() string {
+				return sqlx_builder.
+					Select().
+					Columns("*").
+					From("foo").
+					LimitWith(0).
+					PlaceholderMapping(sqlx_expression.PostgresPlaceholderMapping).
+					String()
+			},
+			sql: `
+			SELECT * FROM foo
+			LIMIT $1;
+			`,
+		},
+		{
 			desc: "sets sort order (asc) if requested",
 			builder: func() string {
 				return sqlx_builder.
@@ -79,6 +95,22 @@ func TestSelect(t *testing.T) {
 			sql: `
 			SELECT * FROM foo
 			WHERE (bar LIKE $1 OR bar LIKE 'lorem');
+			`,
+		},
+		{
+			desc: "ignores previous limit instruction if a new one is provided",
+			builder: func() string {
+				return sqlx_builder.
+					Select().
+					Columns("*").
+					From("foo").
+					LimitWith(0).
+					Limit(5).
+					String()
+			},
+			sql: `
+			SELECT * FROM foo
+			LIMIT 5;
 			`,
 		},
 	}
