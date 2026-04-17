@@ -5,10 +5,11 @@ import (
 	"strings"
 
 	"github.com/joaomagfreitas/stdx/slicesx"
+	sqlx_expression "github.com/joaomagfreitas/stdx/sqlx/expression"
 )
 
 type insertBuilder struct {
-	placeholderMapping PlaceholderMapping
+	placeholderMapping sqlx_expression.PlaceholderMapping
 	table              string
 	columns            []string
 	values             []string
@@ -30,7 +31,7 @@ type insertBuilder struct {
 //	// VALUES (?, ?);
 func Insert() *insertBuilder {
 	return &insertBuilder{
-		placeholderMapping: DefaultPlaceholderMapping,
+		placeholderMapping: sqlx_expression.DefaultPlaceholderMapping,
 	}
 }
 
@@ -72,7 +73,7 @@ func (b *insertBuilder) Values(values ...string) *insertBuilder {
 //	// Output:
 //	// INSERT INTO users (name, age)
 //	// VALUES ($1, $2);
-func (b *insertBuilder) PlaceholderMapping(placeholderMapping PlaceholderMapping) *insertBuilder {
+func (b *insertBuilder) PlaceholderMapping(placeholderMapping sqlx_expression.PlaceholderMapping) *insertBuilder {
 	b.placeholderMapping = placeholderMapping
 	return b
 }
