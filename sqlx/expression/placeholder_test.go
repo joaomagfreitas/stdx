@@ -1,25 +1,25 @@
-package sqlx_builder_test
+package sqlx_expression_test
 
 import (
 	"testing"
 
-	sqlx_builder "github.com/joaomagfreitas/stdx/sqlx/builder"
+	sqlx_expression "github.com/joaomagfreitas/stdx/sqlx/expression"
 )
 
 func TestPlaceholderMapping(t *testing.T) {
 	testCases := []struct {
 		desc               string
-		placeholderMapping sqlx_builder.PlaceholderMapping
+		placeholderMapping sqlx_expression.PlaceholderMapping
 		placeholder        string
 	}{
 		{
 			desc:               "default placeholder includes '?' for parameters",
-			placeholderMapping: sqlx_builder.DefaultPlaceholderMapping,
+			placeholderMapping: sqlx_expression.DefaultPlaceholderMapping,
 			placeholder:        "?",
 		},
 		{
 			desc:               "postgres placeholder includes '$' followed by col index +1 for parameters",
-			placeholderMapping: sqlx_builder.PostgresPlaceholderMapping,
+			placeholderMapping: sqlx_expression.PostgresPlaceholderMapping,
 			placeholder:        "$1",
 		},
 	}

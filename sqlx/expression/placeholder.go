@@ -1,4 +1,4 @@
-package sqlx_builder
+package sqlx_expression
 
 import "fmt"
 

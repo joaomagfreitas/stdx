@@ -4,61 +4,65 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/joaomagfreitas/stdx/slicesx"
+	sqlx_expression "github.com/joaomagfreitas/stdx/sqlx/expression"
 )
 
 type selectBuilder struct {
-	placeholderMapping PlaceholderMapping
+	where              sqlx_expression.Expression
+	placeholderMapping sqlx_expression.PlaceholderMapping
 	table              string
+	sortColumn         string
 	columns            []string
-	values             []string
-	where              []expression
 	limit              int64
 	sortAscending      bool
-	sortColumn         string
 }
 
-/*
-SELECT * FROM ... WHERE ... OR.. AND ... LIMIT
-*/
-// Insert allows to create an INSERT SQL query in a fluent manner,
+// Select allows to create a SELECT SQL query in a fluent manner,
 // by providing a builder API for each supported clause.
 // //
 // Example:
 //
-//	query := Insert().
-//	    Into("users").
-//	    Columns("name", "age").
+//	query := Select().
+//	    Columns("*")
+//		From("users").
+//		Where(
+//			sql_expression.
+//				Equals("user_id", "1").
+//				Or()
+//				Equals("name", 0),
+//		).
+//		Limit(10).
 //	    String()
 //
 //	// Output:
-//	// INSERT INTO users (name, age)
-//	// VALUES (?, ?);
+//	// SELECT * FROM users
+//	// WHERE (user_id = 1 OR name = ?)
+//	// LIMIT 5;
 func Select() *selectBuilder {
 	return &selectBuilder{
-		placeholderMapping: DefaultPlaceholderMapping,
+		placeholderMapping: sqlx_expression.DefaultPlaceholderMapping,
 	}
 }
 
-// Columns sets the column names for the INSERT statement. The column names are treated "as-is".
+// Columns sets the column names to return. The column names are treated "as-is".
 func (b *selectBuilder) Columns(columns ...string) *selectBuilder {
 	b.columns = columns
 	return b
 }
 
-// From sets the target table name for the SELECT statement. The table name is treated "as-is".
+// From sets the target table name. The table name is treated "as-is".
 func (b *selectBuilder) From(table string) *selectBuilder {
 	b.table = table
 	return b
 }
 
-// Where sets the filter expressions for the SELECT statement.
-func (b *selectBuilder) Where(expressions ...expression) *selectBuilder {
-	b.where = expressions
+// Where sets the filter expression.
+func (b *selectBuilder) Where(expression sqlx_expression.Expression) *selectBuilder {
+	b.where = expression
 	return b
 }
 
-// Limit sets how many rows to return for the SELECT statement.
+// Limit sets how many rows to return.
 func (b *selectBuilder) Limit(count int64) *selectBuilder {
 	b.limit = count
 	return b
@@ -84,41 +88,48 @@ func (b *selectBuilder) SortDesc(column string) *selectBuilder {
 //
 // Example:
 //
-//	query := Insert().
-//	    Into("users").
-//	    Columns("name", "age").
-//	    PlaceholderMapping(func(i int) string {
-//	        return fmt.Sprintf("$%d", i+1)
-//	    }).
+//	query := Select().
+//	    Columns("*")
+//		From("users").
+//		Where(
+//			sql_expression.
+//				Equals("user_id", "1").
+//				Or()
+//				Equals("name", 0),
+//		).
+//		Limit(10).
+//		PlaceholderMapping(sqlx_expression.PostgresPlaceholderMapping).
 //	    String()
 //
 //	// Output:
-//	// INSERT INTO users (name, age)
-//	// VALUES ($1, $2);
-func (b *selectBuilder) PlaceholderMapping(placeholderMapping PlaceholderMapping) *selectBuilder {
+//	// SELECT * FROM users
+//	// WHERE (user_id = 1 OR name = $1)
+//	// LIMIT 5;
+func (b *selectBuilder) PlaceholderMapping(placeholderMapping sqlx_expression.PlaceholderMapping) *selectBuilder {
 	b.placeholderMapping = placeholderMapping
 	return b
 }
 
-// String builds and returns the final SQL INSERT query as a string.
+// String builds and returns the final SQL SELECT query as a string.
 func (b *selectBuilder) String() string {
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "INSERT INTO %s", b.table)
+	fmt.Fprintf(&sb, "SELECT %s FROM %s", strings.Join(b.columns, ", "), b.table)
 
-	if len(b.columns) > 0 {
-		fmt.Fprintf(&sb, " (%s)", strings.Join(b.columns, ", "))
+	if b.where != nil {
+		fmt.Fprintf(&sb, "\nWHERE %s", b.where.String(b.placeholderMapping))
 	}
 
-	var vs []string
-	if len(b.values) > 0 {
-		vs = b.values
-	} else {
-		vs = slicesx.Gen(len(b.columns), b.placeholderMapping)
-	}
-	fmt.Fprintf(&sb, "\nVALUES (%s)", strings.Join(vs, ", "))
+	if len(b.sortColumn) > 0 {
+		sort := "ASC"
+		if !b.sortAscending {
+			sort = "DESC"
+		}
 
-	if len(b.returning) > 0 {
-		fmt.Fprintf(&sb, "\nRETURNING %s", strings.Join(b.returning, ", "))
+		fmt.Fprintf(&sb, "\nORDER BY %s %s", b.sortColumn, sort)
+	}
+
+	if b.limit > 0 {
+		fmt.Fprintf(&sb, "\nLIMIT %d", b.limit)
 	}
 
 	sb.WriteRune(';')

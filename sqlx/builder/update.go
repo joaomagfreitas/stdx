@@ -3,10 +3,12 @@ package sqlx_builder
 import (
 	"fmt"
 	"strings"
+
+	sqlx_expression "github.com/joaomagfreitas/stdx/sqlx/expression"
 )
 
 type updateBuilder struct {
-	placeholderMapping PlaceholderMapping
+	placeholderMapping sqlx_expression.PlaceholderMapping
 	table              string
 	setColumns         []string
 	whereColumns       []string
@@ -31,7 +33,7 @@ type updateBuilder struct {
 //	// WHERE id = ?
 func Update() *updateBuilder {
 	return &updateBuilder{
-		placeholderMapping: DefaultPlaceholderMapping,
+		placeholderMapping: sqlx_expression.DefaultPlaceholderMapping,
 	}
 }
 
@@ -81,7 +83,7 @@ func (b *updateBuilder) Values(values ...string) *updateBuilder {
 //	// UPDATE users
 //	// SET name = $1, age = $2
 //	// WHERE id = $3
-func (b *updateBuilder) PlaceholderMapping(placeholderMapping PlaceholderMapping) *updateBuilder {
+func (b *updateBuilder) PlaceholderMapping(placeholderMapping sqlx_expression.PlaceholderMapping) *updateBuilder {
 	b.placeholderMapping = placeholderMapping
 	return b
 }
