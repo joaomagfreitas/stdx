@@ -8,13 +8,16 @@ import (
 )
 
 type selectBuilder struct {
-	where              sqlx_expression.Expression
-	placeholderMapping sqlx_expression.PlaceholderMapping
-	table              string
-	sortColumn         string
-	columns            []string
-	limit              int64
-	sortAscending      bool
+	where                 sqlx_expression.Expression
+	placeholderMapping    sqlx_expression.PlaceholderMapping
+	table                 string
+	sortColumn            string
+	columns               []string
+	limit                 int64
+	limitPlaceholderIndex int
+	useLimit              bool
+	useLimitPlaceholder   bool
+	sortAscending         bool
 }
 
 // Select allows to create a SELECT SQL query in a fluent manner,
@@ -65,6 +68,16 @@ func (b *selectBuilder) Where(expression sqlx_expression.Expression) *selectBuil
 // Limit sets how many rows to return.
 func (b *selectBuilder) Limit(count int64) *selectBuilder {
 	b.limit = count
+	b.useLimitPlaceholder = false
+	b.useLimit = true
+	return b
+}
+
+// LimitWith sets how many rows to return as specified in placeholder.
+func (b *selectBuilder) LimitWith(placeholderIndex int) *selectBuilder {
+	b.limitPlaceholderIndex = placeholderIndex
+	b.useLimit = false
+	b.useLimitPlaceholder = true
 	return b
 }
 
@@ -128,8 +141,12 @@ func (b *selectBuilder) String() string {
 		fmt.Fprintf(&sb, "\nORDER BY %s %s", b.sortColumn, sort)
 	}
 
-	if b.limit > 0 {
+	if b.useLimit {
 		fmt.Fprintf(&sb, "\nLIMIT %d", b.limit)
+	}
+
+	if b.useLimitPlaceholder {
+		fmt.Fprintf(&sb, "\nLIMIT %s", b.placeholderMapping(b.limitPlaceholderIndex))
 	}
 
 	sb.WriteRune(';')
